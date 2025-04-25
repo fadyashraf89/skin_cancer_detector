@@ -1,7 +1,9 @@
 import 'exports.dart';
 
 class SkinCancerDetectorApp extends StatelessWidget {
-  const SkinCancerDetectorApp({super.key});
+  final String uid;
+
+  const SkinCancerDetectorApp({super.key, required this.uid});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +13,7 @@ class SkinCancerDetectorApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
-      home: const ModelTestPage(),
+      home: ModelTestPage(uid: uid),
       debugShowCheckedModeBanner: false,
     );
   }

@@ -1,31 +1,35 @@
 import 'exports.dart';
 
 class HistoryPage extends StatelessWidget {
-  const HistoryPage({super.key});
+  final String uid;
+  const HistoryPage({super.key, required this.uid});
 
   @override
   Widget build(BuildContext context) {
-    final historyRef = FirebaseFirestore.instance
-        .collection('history')
-        .orderBy('timestamp', descending: true);
+    final docRef = FirebaseFirestore.instance.collection('history').doc(uid);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Prediction History'),
         backgroundColor: Colors.teal.shade400,
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: historyRef.snapshots(),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: docRef.snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
 
-          final entries = snapshot.data!.docs;
+          final data = snapshot.data!.data() as Map<String, dynamic>?;
+          final predictionsArray = List.from(data?['predictions'] ?? []);
+
+          if (predictionsArray.isEmpty) {
+            return const Center(child: Text("No history found."));
+          }
 
           return ListView.builder(
-            itemCount: entries.length,
+            itemCount: predictionsArray.length,
             itemBuilder: (context, index) {
-              final entry = entries[index].data() as Map<String, dynamic>;
-              final predictions = List.from(entry['predictions'] ?? []);
+              final entry = predictionsArray[index];
+              final preds = List.from(entry['predictions'] ?? []);
               final base64Image = entry['imageBase64'];
               final timestamp = entry['timestamp'];
 
@@ -48,7 +52,7 @@ class HistoryPage extends StatelessWidget {
                       const SizedBox(height: 10),
                       Text("⏰ Timestamp: $timestamp"),
                       const SizedBox(height: 10),
-                      ...predictions.map((pred) {
+                      ...preds.map((pred) {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

@@ -3,7 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:image/image.dart' as img;
 
 class ModelTestPage extends StatefulWidget {
-  const ModelTestPage({super.key});
+  final String uid;
+  const ModelTestPage({super.key, required this.uid});
 
   @override
   State<ModelTestPage> createState() => _ModelTestPageState();
@@ -95,11 +96,18 @@ class _ModelTestPageState extends State<ModelTestPage> {
         };
       }).toList();
 
-      await FirebaseFirestore.instance.collection('history').add({
-        'timestamp': _timestamp,
-        'imageBase64': base64Image,
-        'predictions': predictions,
-      });
+      await FirebaseFirestore.instance
+          .collection('history')
+          .doc(widget.uid)
+          .set({
+        'predictions': FieldValue.arrayUnion([
+          {
+            'timestamp': _timestamp,
+            'imageBase64': base64Image,
+            'predictions': predictions,
+          }
+        ])
+      }, SetOptions(merge: true));
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Prediction saved to history!')),
@@ -123,9 +131,9 @@ class _ModelTestPageState extends State<ModelTestPage> {
     return _image == null
         ? const Text("No image selected.")
         : ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: Image.file(_image!, height: 250),
-    );
+            borderRadius: BorderRadius.circular(12),
+            child: Image.file(_image!, height: 250),
+          );
   }
 
   Widget _buildPredictionCard() {
@@ -139,7 +147,8 @@ class _ModelTestPageState extends State<ModelTestPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text("🩺 Prediction Result", style: Theme.of(context).textTheme.titleLarge),
+            Text("🩺 Prediction Result",
+                style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 10),
             ..._results!.map((res) {
               return Column(
@@ -148,7 +157,8 @@ class _ModelTestPageState extends State<ModelTestPage> {
                     children: [
                       const Icon(Icons.label_outline),
                       const SizedBox(width: 8),
-                      Text("${res['label']}", style: const TextStyle(fontSize: 16)),
+                      Text("${res['label']}",
+                          style: const TextStyle(fontSize: 16)),
                     ],
                   ),
                   Row(
@@ -191,7 +201,10 @@ class _ModelTestPageState extends State<ModelTestPage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const HistoryPage()),
+                MaterialPageRoute(
+                    builder: (context) => HistoryPage(
+                          uid: widget.uid,
+                        )),
               );
             },
           ),
