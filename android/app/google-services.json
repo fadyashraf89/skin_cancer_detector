@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "818296297777",
+    "firebase_url": "https://skincancer2-fd2bf-default-rtdb.firebaseio.com",
     "project_id": "skincancer2-fd2bf",
     "storage_bucket": "skincancer2-fd2bf.firebasestorage.app"
   },
@@ -29,6 +30,25 @@
         "mobilesdk_app_id": "1:818296297777:android:af2812310e44ef59347810",
         "android_client_info": {
           "package_name": "com.example.skin_cancer_detector"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBNUlOrFHLtjR9BLqJO2bRHJGRFnjt9VQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:818296297777:android:96512b2f10d0f128347810",
+        "android_client_info": {
+          "package_name": "com.example.skin_cancer_latest"
         }
       },
       "oauth_client": [],
